@@ -240,6 +240,8 @@ func planOpaque(ctx context.Context, p *planner, stmt tree.Statement) (planNode,
 		return p.ShowFingerprints(ctx, n)
 	case *tree.Truncate:
 		return p.Truncate(ctx, n)
+	case *tree.CreateModel:
+		return p.CreateModel(ctx, n)
 	case tree.CCLOnlyStatement:
 		plan, err := p.maybePlanHook(ctx, stmt)
 		if plan == nil && err == nil {
@@ -333,6 +335,7 @@ func init() {
 		&tree.ShowFingerprints{},
 		&tree.ShowVar{},
 		&tree.Truncate{},
+		&tree.CreateModel{},
 
 		// CCL statements (without Export which has an optimizer operator).
 		&tree.AlterBackup{},

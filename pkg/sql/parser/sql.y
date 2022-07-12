@@ -931,6 +931,9 @@ func (u *sqlSymUnion) asTenantClause() tree.TenantID {
 %token NOT_LA NULLS_LA WITH_LA AS_LA GENERATED_ALWAYS GENERATED_BY_DEFAULT RESET_ALL ROLE_ALL
 %token USER_ALL ON_LA TENANT_ALL SET_TRACING
 
+// machine learning
+%token <str> MODEL PREDICT
+
 %union {
   id    int32
   pos   int32
@@ -1495,6 +1498,9 @@ func (u *sqlSymUnion) asTenantClause() tree.TenantID {
 %type <privilege.TargetObjectType> target_object_type
 %type <tree.TenantID> opt_as_tenant_clause
 
+// machine learning
+%type <str> model_name
+%type <tree.Statement> create_ml_stmt
 
 // Precedence: lowest to highest
 %nonassoc  VALUES              // see value_clause
@@ -3777,6 +3783,7 @@ create_stmt:
 | create_unsupported   {}
 | CREATE error         // SHOW HELP: CREATE
 
+
 // %Help: CREATE EXTENSION
 // %Category: Cfg
 // %Text: CREATE EXTENSION [IF NOT EXISTS] name
@@ -3862,6 +3869,7 @@ create_ddl_stmt:
 | create_type_stmt     // EXTEND WITH HELP: CREATE TYPE
 | create_view_stmt     // EXTEND WITH HELP: CREATE VIEW
 | create_sequence_stmt // EXTEND WITH HELP: CREATE SEQUENCE
+| create_ml_stmt			 // machine learning
 
 // %Help: CREATE STATISTICS - create a new table statistic
 // %Category: Misc
@@ -9586,6 +9594,15 @@ create_database_stmt:
   }
 | CREATE DATABASE error // SHOW HELP: CREATE DATABASE
 
+create_ml_stmt:
+  CREATE MODEL model_name from_clause
+  {
+    $$.val = &tree.CreateModel{
+      Name: tree.Name($3),
+      From: $4.from(),
+    }
+  }
+
 opt_primary_region_clause:
   primary_region_clause
 | /* EMPTY */
@@ -13839,6 +13856,9 @@ region_name_list:      name_list
 
 schema_name:           name
 
+// machine learning
+model_name:            unrestricted_name
+
 qualifiable_schema_name:
 	name
 	{
@@ -14474,6 +14494,8 @@ unreserved_keyword:
 | WRITE
 | YEAR
 | ZONE
+| MODEL
+| PREDICT
 
 // Column identifier --- keywords that can be column, table, etc names.
 //
