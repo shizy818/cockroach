@@ -405,6 +405,9 @@ var systemTableBackupConfiguration = map[string]systemBackupConfiguration{
 	systemschema.SystemPrivilegeTable.GetName(): {
 		shouldIncludeInClusterBackup: optOutOfClusterBackup,
 	},
+	systemschema.MLModelTable.GetName(): {
+		shouldIncludeInClusterBackup: optOutOfClusterBackup,
+	},
 }
 
 // GetSystemTablesToIncludeInClusterBackup returns a set of system table names that

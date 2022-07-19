@@ -537,6 +537,11 @@ type IndexUsageStatsController interface {
 	ResetIndexUsageStats(ctx context.Context) error
 }
 
+// MLOperator machine learning interface
+type MLOperator interface {
+	CreateMLModel(ctx context.Context, modelID uint64, name string) error
+}
+
 // StmtDiagnosticsRequestInsertFunc is an interface embedded in EvalCtx that can
 // be used by the builtins to insert a statement diagnostics request. This
 // interface is introduced to avoid circular dependency.

@@ -330,6 +330,9 @@ func addSystemDescriptorsToSchema(target *MetadataSchema) {
 
 	// Adding a new system table? It should be added here to the metadata schema,
 	// and also created as a migration for older clusters.
+
+	// Machine Learning tables
+	target.AddDescriptor(systemschema.MLModelTable)
 }
 
 // addSplitIDs adds a split point for each of the PseudoTableIDs to the supplied

@@ -216,6 +216,9 @@ type Context struct {
 	// QueryCancelKey is the key used by the pgwire protocol to cancel the
 	// query currently running in this session.
 	QueryCancelKey pgwirecancel.BackendKeyData
+
+	// Machine learning
+	ML MLOperator
 }
 
 var _ tree.ParseTimeContext = &Context{}

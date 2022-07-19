@@ -664,6 +664,14 @@ CREATE TABLE system.privileges (
 	CONSTRAINT "primary" PRIMARY KEY (username, path),
 	FAMILY "primary" (username, path, privileges, grant_options)
 );`
+
+	MLModelsTableSchema = `
+CREATE TABLE system.ml_models (
+  id     INT8,
+  name   STRING NOT NULL,
+  CONSTRAINT "primary" PRIMARY KEY (id),
+  FAMILY "primary" (id, name)
+);`
 )
 
 func pk(name string) descpb.IndexDescriptor {
@@ -2424,6 +2432,25 @@ var (
 			},
 		),
 	)
+
+	MLModelTable = registerSystemTable(
+		MLModelsTableSchema,
+		systemTable(
+			catconstants.MLModelsTableName,
+			descpb.InvalidID, // dynamically assigned
+			[]descpb.ColumnDescriptor{
+				{Name: "id", ID: 1, Type: types.Int},
+				{Name: "name", ID: 2, Type: types.String},
+			},
+			[]descpb.ColumnFamilyDescriptor{{
+				Name:            "primary",
+				ID:              0,
+				DefaultColumnID: 2,
+				ColumnNames:     []string{"id", "name"},
+				ColumnIDs:       []descpb.ColumnID{1, 2},
+			}},
+			pk("id"),
+		))
 )
 
 type descRefByName struct {
